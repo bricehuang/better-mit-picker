@@ -9,9 +9,6 @@ app.config.from_object(__name__)
 # this skeleton code is from Flask tutorial
 app.config.update(dict(
     DATABASE=os.path.join(app.root_path, 'courseDatabase.db'),
-    SECRET_KEY="secretkey",
-    USERNAME="username",
-    PASSWORD="password"
 ))
 app.config.from_envvar('PICKER_SETTINGS', silent=True)
 
@@ -56,8 +53,6 @@ def show_entries():
 
 @app.route('/add', methods=['POST'])
 def add_entry():
-    if not session.get('logged_in'):
-        abort(401)
     db = get_db()
     db.execute('insert into entries (courseNumber, courseName) values (?, ?)',
                  [request.form['courseNumber'], request.form['courseName']])
@@ -65,6 +60,7 @@ def add_entry():
     flash('You added a class!')
     return redirect(url_for('show_entries'))
 
+"""
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
@@ -84,3 +80,4 @@ def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
     return redirect(url_for('show_entries'))
+"""
