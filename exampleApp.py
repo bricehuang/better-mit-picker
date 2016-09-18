@@ -9,6 +9,7 @@ app.config.from_object(__name__)
 # this skeleton code is from Flask tutorial
 app.config.update(dict(
     DATABASE=os.path.join(app.root_path, 'courseDatabase.db'),
+    SECRET_KEY="secretkey"
 ))
 app.config.from_envvar('PICKER_SETTINGS', silent=True)
 
