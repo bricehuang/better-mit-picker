@@ -19,15 +19,12 @@ def connect_db():
     return rv
 
 def get_db():
-    """Opens a new database connection if there is none yet for the
-    current application context. """
     if not hasattr(g, 'sqlite_db'):
         g.sqlite_db = connect_db()
     return g.sqlite_db
 
 @app.teardown_appcontext
 def close_db(error):
-    """Closes the database again at the end of the request."""
     if hasattr(g, 'sqlite_db'):
         g.sqlite_db.close()
 
@@ -39,46 +36,41 @@ def init_db():
 
 @app.cli.command('initdb')
 def initdb_command():
-    """Initializes the database."""
     init_db()
     print 'Initialized the database.'
 
-# this code is experimental, also from flask tutorial
+#my stuff
 
 @app.route('/')
 def show_entries():
     db = get_db()
-    cur = db.execute('select courseNumber, courseName from entries order by id desc')
+    cur = db.execute('select courseNumber, courseName, courseBit from entries order by id desc')
     entries = cur.fetchall()
     return render_template('show_entries.html', entries=entries)
+
+@app.route('/input')
+def input_entries():
+    db = get_db()
+    cur = db.execute('select courseNumber, courseName, courseBit from entries order by id desc')
+    entries = cur.fetchall()
+    return render_template('input_entries.html', entries=entries)
 
 @app.route('/add', methods=['POST'])
 def add_entry():
     db = get_db()
-    db.execute('insert into entries (courseNumber, courseName) values (?, ?)',
-                 [request.form['courseNumber'], request.form['courseName']])
+    db.execute('insert into entries (courseNumber, courseName, courseBit) values (?, ?, ?)',
+                 [request.form['courseNumber'], request.form['courseName'], request.form['courseBit']])
     db.commit()
     flash('You added a class!')
     return redirect(url_for('show_entries'))
 
-"""
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    error = None
-    if request.method == 'POST':
-        if request.form['username'] != app.config['USERNAME']:
-            error = 'Invalid username'
-        elif request.form['password'] != app.config['PASSWORD']:
-            error = 'Invalid password'
-        else:
-            session['logged_in'] = True
-            flash('You were logged in')
-            return redirect(url_for('show_entries'))
-    return render_template('login.html', error=error)
+@app.route('/filter')
+def filter():
+    return render_template('filter.html')
 
-@app.route('/logout')
-def logout():
-    session.pop('logged_in', None)
-    flash('You were logged out')
-    return redirect(url_for('show_entries'))
-"""
+@app.route('/show-filtered', methods=['POST'])
+def show_filtered_entries():
+    db = get_db()
+    cur = db.execute('select courseNumber, courseName, courseBit from entries where courseBit = %s order by id desc' % request.form['filterBit'])
+    entries = cur.fetchall()
+    return render_template('show_filtered_entries.html', entries=entries)

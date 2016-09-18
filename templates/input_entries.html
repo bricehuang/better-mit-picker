@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block body %}
+  <form action="{{ url_for('add_entry') }}" method=post class=add-entry>
+    <dl>
+      <dt>Course Number:
+      <dd><input type=text size=30 name=courseNumber>
+      <dt>Course Name:
+      <dd><input type=text size=30 name=courseName>
+      <dt>Course Bit:
+      <dd><input type=number size=30 name=courseBit>
+      <dd><input type=submit value="Add">
+    </dl>
+  </form>
+  <ul class=entries>
+  {% for entry in entries %}
+    <li><h2>{{ entry.courseNumber }}</h2>{{ entry.courseName|safe }},{{ entry.courseBit|safe }}
+  {% else %}
+    <li><em>No classes found. </em>
+  {% endfor %}
+  </ul>
+{% endblock %}

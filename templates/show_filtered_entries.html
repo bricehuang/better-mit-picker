@@ -13,6 +13,9 @@
     <dd><input type=submit value="Add Entry to Database">
   </form>
   <form action="{{ url_for('filter') }}" method=get class=add-entry>
-    <dd><input type=submit value="Filter View">
+    <dd><input type=submit value="Filter by Different Criteria">
+  </form>
+  <form action="{{ url_for('show_entries') }}" method=get class=add-entry>
+    <dd><input type=submit value="See Full Course List">
   </form>
   {% endblock %}
